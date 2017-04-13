@@ -54,35 +54,6 @@ plot(hlow, xlim = c(0,25), main = "Low Interest", xlab = "Number of photos")
 
 Listings without photos seem to have low interest.
 
-## Determine manager skill
-Each rental is listed by a particular manager so we'll check whether some managers are more skilled than others and create a feature for the proportion of high interest listings they have.
-
-```
-library(reshape2)
-managerData <- data[, c(9, 11, 15)]
-managerSpread <- dcast(managerData, formula = manager_id ~ interest_level, fun.aggregate = length)
-managerSpread$manager_skill <- (managerSpread$high / (managerSpread$high + managerSpread$low + managerSpread$medium))
-hist(managerSpread$manager_skill, main = "Manager Skill", xlab = "Skill")
-managerSkill <- managerSpread[, c(1, 6)]
-data <- merge(data, managerSkill, by.x = "manager_id", all = TRUE)
-```
-![Manager Skill](https://github.com/tracybedrosian/XGBoost-Rental-interest/blob/master/Manager%20Skill.png)
-
-## Determine building popularity
-These rentals are located in NYC so many of them are located within the same building. We'll create a feature for the popularity of the building.
-
-```
-library(reshape2)
-data$building_id <- replace(data$building_id, data$building_id == 0, NA)
-buildingData <- data[, c(4, 15)]
-buildingSpread <- dcast(buildingData, formula = building_id ~ interest_level, fun.aggregate = length)
-buildingSpread$building_pop <- (buildingSpread$high / (buildingSpread$high + buildingSpread$low + buildingSpread$medium))
-hist(buildingSpread$building_pop, main = "Building Popularity", xlab = "Popularity")
-buildingPop <- buildingSpread[, c(1, 6)]
-data <- merge(data, buildingPop, by.x = "building_id", all = TRUE)
-```
-![Building Popularity](https://github.com/tracybedrosian/XGBoost-Rental-interest/blob/master/Building%20Popularity.png)
-
 ## Find correct address coordinates
 Some rental listings lack complete address information and have been mis-assigned geographic coordinates outside of NY. We'll find and fix these listings by connecting to Google Maps API.
 
@@ -158,7 +129,7 @@ Each listing is associated with a nested list of tags or features. We'll extract
 
 ```
 library(tidyr)
-featuresData <- data[,c(10, 12, 17, 18)]
+featuresData <- data[,c(9, 11, 17, 18)]
 
 featuresExtracted <- featuresData %>%
   filter(map(features, is_empty) != TRUE) %>%
@@ -186,7 +157,7 @@ library(reshape2)
 featuresSpread <- unique(featuresExtracted)
 featuresSpread <- dcast(featuresSpread, formula = listing_id ~ features, fun.aggregate = length)
 
-interest <- data[,c(12, 17, 18)]
+interest <- data[,c(11, 17, 18)]
 interest <- unique(interest)
 features <- merge(interest, featuresSpread, by.x = "listing_id", all = TRUE)
 
@@ -197,7 +168,7 @@ features[, c(4:35)] <- lapply(features[, c(4:35)], factor)
 And we'll collect the other features of interest and merge everything into one data frame.
 
 ```
-otherFeatures <- data[, c(3, 4, 11, 12, 13, 15, 17, 18, 19, 20, 21, 22)]
+otherFeatures <- data[, c(1, 2, 10, 11, 12, 15, 17, 18, 19, 20)]
 allFeatures <- merge(features, otherFeatures, by.x = "listing_id", by.y = "listing_id")
 allFeatures <- allFeatures[, -c(42, 41)]
 
