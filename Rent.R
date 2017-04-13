@@ -46,7 +46,7 @@ data$building_id <- replace(data$building_id, data$building_id == 0, NA)
 buildingData <- data[, c(4, 15)]
 buildingSpread <- dcast(buildingData, formula = building_id ~ interest_level, fun.aggregate = length)
 buildingSpread$building_pop <- (buildingSpread$high / (buildingSpread$high + buildingSpread$low + buildingSpread$medium))
-hist(buildingSpread$building_pop)
+hist(buildingSpread$building_pop, main = "Building Popularity", xlab = "Popularity")
 buildingPop <- buildingSpread[, c(1, 6)]
 data <- merge(data, buildingPop, by.x = "building_id", all = TRUE)
 
