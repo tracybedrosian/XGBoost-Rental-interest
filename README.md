@@ -244,5 +244,5 @@ xgb.ggplot.importance(imp)
 ```
 ![Feature Importance](https://github.com/tracybedrosian/XGBoost-Rental-interest/blob/master/FeatImportance.png)
 
-The most important features are depicted. 
+The most important features are depicted here.
 
