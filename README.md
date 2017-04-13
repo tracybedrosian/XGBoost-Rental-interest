@@ -120,7 +120,7 @@ ggmap(map) + geom_point(data = dataTrain, aes(x = longitude, y = latitude, fill 
 ```
 ![Location](https://github.com/tracybedrosian/XGBoost-Rental-interest/blob/master/Map%20x%20Interest.png)
 
-High interest rentals seem to be distributed all over NYC and not restricted to one specific neighborhood or even Manhatten. Other factors must contribute to interest level. 
+High interest rentals seem to be distributed all over NYC and not restricted to one specific neighborhood or even Manhattan. Other factors must contribute to interest level. 
 
 ## Visualize interest level by price and bedrooms
 
