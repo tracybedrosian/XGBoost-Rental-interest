@@ -45,7 +45,13 @@ hlow <- hist(data$numphotos[data$interest_level == "low"], breaks = 100, plot=FA
 hlow$counts=hlow$counts/sum(hlow$counts)
 plot(hlow, xlim = c(0,25), main = "Low Interest", xlab = "Number of photos")
 ```
-insert 3 histograms
+
+![High Interest](https://github.com/tracybedrosian/XGBoost-Rental-interest/blob/master/Photos%20High%20Int.png) 
+
+![Medium Interest](https://github.com/tracybedrosian/XGBoost-Rental-interest/blob/master/Photos%20Med%20Int.png) 
+
+![Low Interest](https://github.com/tracybedrosian/XGBoost-Rental-interest/blob/master/Photos%20Low%20Int.png) 
+
 
 ## Determine manager skill
 Each rental is listed by a particular manager so we'll check whether some managers are more skilled than others and create a feature for the proportion of high interest listings they have.
@@ -59,7 +65,7 @@ hist(managerSpread$manager_skill, main = "Manager Skill", xlab = "Skill")
 managerSkill <- managerSpread[, c(1, 6)]
 data <- merge(data, managerSkill, by.x = "manager_id", all = TRUE)
 ```
-insert 1 histogram
+![Manager Skill](https://github.com/tracybedrosian/XGBoost-Rental-interest/blob/master/Manager%20Skill.png)
 
 ## Determine building popularity
 These rentals are located in NYC so many of them are located within the same building. We'll create a feature for the popularity of the building.
@@ -74,7 +80,7 @@ hist(buildingSpread$building_pop, main = "Building Popularity", xlab = "Populari
 buildingPop <- buildingSpread[, c(1, 6)]
 data <- merge(data, buildingPop, by.x = "building_id", all = TRUE)
 ```
-insert 1 histogram
+![Building Popularity](https://github.com/tracybedrosian/XGBoost-Rental-interest/blob/master/Building%20Popularity.png)
 
 ## Find correct address coordinates
 Some rental listings lack complete address information and have been mis-assigned geographic coordinates outside of NY. We'll find and fix these listings by connecting to Google Maps API.
@@ -111,7 +117,7 @@ dataTrain$latitude <- as.numeric(dataTrain$latitude)
 
 ggmap(map) + geom_point(data = dataTrain, aes(x = longitude, y = latitude, fill = interest_level, alpha = 0.8), size = 1, shape = 21) + xlab("longitude") + ylab("latitude")
 ```
-insert map
+![Location](https://github.com/tracybedrosian/XGBoost-Rental-interest/blob/master/Map%20x%20Interest.png)
 
 High interest rentals seem to be distributed all over NYC and not restricted to one specific neighborhood or even Manhatten. Other factors must contribute to interest level. 
 
@@ -120,7 +126,7 @@ High interest rentals seem to be distributed all over NYC and not restricted to 
 ```
 ggplot(dataTrain, aes(x = bedrooms, y = price)) + geom_point(aes(colour = factor(interest_level))) + ylim(0, 15000)
 ```
-insert graph
+![Price](https://github.com/tracybedrosian/XGBoost-Rental-interest/blob/master/Price%20x%20Bedrooms.png)
 
 Lower price rentals seem to be more popular across all apartment sizes.
 
@@ -132,7 +138,7 @@ library(tidyr)
 data <- separate(data = data, col = created, into = c("year", "month", "day_time"), sep = "-")
 ggplot(data, aes(x = month, fill = interest_level)) + geom_bar(position = "dodge")
 ```
-insert 1 plot
+![Month](https://github.com/tracybedrosian/XGBoost-Rental-interest/blob/master/Month%20x%20Interest.png)
 
 ## Extract length of rental description
 Each rental listing has an unstructured description. For now we'll just extract the length of that description as a new feature.
@@ -142,7 +148,7 @@ data$descriptors <- sapply(gregexpr("\\W+", data$description), length) + 1
 ggplot(data, aes(x = interest_level, y = descriptors)) + geom_point() + geom_violin() + ylim(0,1000)
 ```
 
-insert plot
+![Descriptors](https://github.com/tracybedrosian/XGBoost-Rental-interest/blob/master/Description%20x%20Interest.png)
 
 Listings without a description seem to fall into the low interest category.
 
@@ -264,8 +270,7 @@ write.csv(allpredictions,paste0(Sys.Date(),"-XGBoost",seed,".csv"),row.names = F
 imp <- xgb.importance(names(train),model = gbdt)
 xgb.ggplot.importance(imp)
 ```
-
-insert imp plot
+![Feature Importance](https://github.com/tracybedrosian/XGBoost-Rental-interest/blob/master/FeatImportance.png)
 
 The most important features are depicted. 
 
