@@ -21,22 +21,22 @@ data$numphotos <- lengths(data$photos)
 library(ggplot2)
 hhigh <- hist(data$numphotos[data$interest_level == "high"], breaks = 100, plot=FALSE)
 hhigh$counts=hhigh$counts/sum(hhigh$counts)
-plot(hhigh)
+plot(hhigh, main = "High Interest", xlab = "Number of photos")
 
 hmed <- hist(data$numphotos[data$interest_level == "medium"], breaks = 100, plot=FALSE)
 hmed$counts=hmed$counts/sum(hmed$counts)
-plot(hmed)
+plot(hmed, main = "Medium Interest", xlab = "Number of photos")
 
 hlow <- hist(data$numphotos[data$interest_level == "low"], breaks = 100, plot=FALSE)
 hlow$counts=hlow$counts/sum(hlow$counts)
-plot(hlow, xlim = c(0,25))
+plot(hlow, xlim = c(0,25), main = "Low Interest", xlab = "Number of photos")
 
 # Feature engineering manager skill
 library(reshape2)
 managerData <- data[, c(9, 11, 15)]
 managerSpread <- dcast(managerData, formula = manager_id ~ interest_level, fun.aggregate = length)
 managerSpread$manager_skill <- (managerSpread$high / (managerSpread$high + managerSpread$low + managerSpread$medium))
-hist(managerSpread$manager_skill)
+hist(managerSpread$manager_skill, main = "Manager Skill", xlab = "Skill")
 managerSkill <- managerSpread[, c(1, 6)]
 data <- merge(data, managerSkill, by.x = "manager_id", all = TRUE)
 
