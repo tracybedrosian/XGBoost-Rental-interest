@@ -52,6 +52,7 @@ plot(hlow, xlim = c(0,25), main = "Low Interest", xlab = "Number of photos")
 
 ![Low Interest](https://github.com/tracybedrosian/XGBoost-Rental-interest/blob/master/Photos%20Low%20Int.png) 
 
+Listings without photos seem to have low interest.
 
 ## Determine manager skill
 Each rental is listed by a particular manager so we'll check whether some managers are more skilled than others and create a feature for the proportion of high interest listings they have.
@@ -205,7 +206,7 @@ colnames(allFeatures)[28] <- "prewar"
 ```
 
 ## Training a model and making predictions
-Finally we'll use XGBoost to train a model to predict the interest level of a particular rental listing based on its features.
+Finally we'll split the datasets back into training and test sets and then use XGBoost to train a model to predict the interest level of a particular rental listing based on its features.
 
 ```
 library(xgboost)
