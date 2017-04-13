@@ -31,25 +31,6 @@ hlow <- hist(data$numphotos[data$interest_level == "low"], breaks = 100, plot=FA
 hlow$counts=hlow$counts/sum(hlow$counts)
 plot(hlow, xlim = c(0,25), main = "Low Interest", xlab = "Number of photos")
 
-# Feature engineering manager skill
-library(reshape2)
-managerData <- data[, c(9, 11, 15)]
-managerSpread <- dcast(managerData, formula = manager_id ~ interest_level, fun.aggregate = length)
-managerSpread$manager_skill <- (managerSpread$high / (managerSpread$high + managerSpread$low + managerSpread$medium))
-hist(managerSpread$manager_skill, main = "Manager Skill", xlab = "Skill")
-managerSkill <- managerSpread[, c(1, 6)]
-data <- merge(data, managerSkill, by.x = "manager_id", all = TRUE)
-
-# Feature engineering building popularity
-library(reshape2)
-data$building_id <- replace(data$building_id, data$building_id == 0, NA)
-buildingData <- data[, c(4, 15)]
-buildingSpread <- dcast(buildingData, formula = building_id ~ interest_level, fun.aggregate = length)
-buildingSpread$building_pop <- (buildingSpread$high / (buildingSpread$high + buildingSpread$low + buildingSpread$medium))
-hist(buildingSpread$building_pop, main = "Building Popularity", xlab = "Popularity")
-buildingPop <- buildingSpread[, c(1, 6)]
-data <- merge(data, buildingPop, by.x = "building_id", all = TRUE)
-
 # Find correct address coordinates
 library(ggmap)
 address <- data[data$longitude == 0 | data$latitude == 0, ]$street_address
@@ -93,7 +74,7 @@ ggplot(data, aes(x = interest_level, y = descriptors)) + geom_point() + geom_vio
 
 # Extract features
 library(tidyr)
-featuresData <- data[,c(10, 12, 17, 18)]
+featuresData <- data[,c(9, 11, 17, 18)]
 
 featuresExtracted <- featuresData %>%
   filter(map(features, is_empty) != TRUE) %>%
@@ -114,7 +95,7 @@ library(reshape2)
 featuresSpread <- unique(featuresExtracted)
 featuresSpread <- dcast(featuresSpread, formula = listing_id ~ features, fun.aggregate = length)
 
-interest <- data[,c(12, 17, 18)]
+interest <- data[,c(11, 17, 18)]
 interest <- unique(interest)
 features <- merge(interest, featuresSpread, by.x = "listing_id", all = TRUE)
 
@@ -122,7 +103,7 @@ names(features) <- gsub(" ", "_", names(features))
 features[, c(4:35)] <- lapply(features[, c(4:35)], factor)
 
 # Get other features into wide form
-otherFeatures <- data[, c(3, 4, 11, 12, 13, 15, 17, 18, 19, 20, 21, 22)]
+otherFeatures <- data[, c(1, 2, 10, 11, 12, 15, 17, 18, 19, 20)]
 allFeatures <- merge(features, otherFeatures, by.x = "listing_id", by.y = "listing_id")
 allFeatures <- allFeatures[, -c(42, 41)]
 
